@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:project/pages/comments.dart';
+import 'package:project/pages/newPost.dart';
+
 //import 'package:project/pages/comments.dart';
 
 void main() {
@@ -16,7 +18,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Prueba Tecnica",
-      initialRoute: '/',
       home: Inicio(),
     );
   }
@@ -38,7 +39,7 @@ class _InicioState extends State<Inicio> {
     List<Post> posts = [];
 
     for (var p in jsonData) {
-      Post post = Post((p['userId']).toString(), p['title'], p['body']);
+      Post post = Post((p['id']), (p['userId']), p['title'], p['body']);
       posts.add(post);
     }
 
@@ -67,7 +68,10 @@ class _InicioState extends State<Inicio> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print('it works xd');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Third()),
+            );
           },
           tooltip: 'Increment',
           child: Icon(Icons.add),
@@ -77,17 +81,17 @@ class _InicioState extends State<Inicio> {
   List<Widget> listPosts(data) {
     List<Widget> posts = [];
     for (var post in data) {
-      posts.add(RaisedButton(
-        onPressed: () {
+      posts.add(InkWell(
+        onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Comments()),
+            MaterialPageRoute(builder: (context) => Second(postId: post.id)),
           );
         },
         child: Card(
           child: ListTile(
             leading: Text(
-              post.userId,
+              post.userId.toString(),
               style: TextStyle(fontSize: 30),
             ),
             title: Text(
@@ -105,7 +109,8 @@ class _InicioState extends State<Inicio> {
 }
 
 class Post {
-  final String userId, title, body;
+  final String title, body;
+  final int id, userId;
 
-  Post(this.userId, this.title, this.body);
+  Post(this.id, this.userId, this.title, this.body);
 }

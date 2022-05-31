@@ -4,21 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:project/main.dart';
 
-class Comments extends StatelessWidget {
-  const Comments({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Prueba Tecnica",
-      //initialRoute: '/',
-      home: Second(),
-    );
-  }
-}
-
 class Second extends StatefulWidget {
-  Second({Key? key}) : super(key: key);
+  final int postId;
+  Second({Key? key, required this.postId}) : super(key: key);
 
   @override
   State<Second> createState() => _SecondState();
@@ -26,8 +14,8 @@ class Second extends StatefulWidget {
 
 class _SecondState extends State<Second> {
   Future getCommentData() async {
-    var response =
-        await http.get(Uri.https('jsonplaceholder.typicode.com', 'comments'));
+    var response = await http.get(Uri.https(
+        'jsonplaceholder.typicode.com', '/posts/${widget.postId}/comments'));
 
     var jsonData = jsonDecode(response.body);
     List<Comment> comments = [];
@@ -43,6 +31,9 @@ class _SecondState extends State<Second> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Comments"),
+      ),
       body: FutureBuilder(
           future: getCommentData(),
           builder: (context, snapshot) {
@@ -66,7 +57,6 @@ class _SecondState extends State<Second> {
     for (var comment in data) {
       comments.add(Card(
         child: ListTile(
-          leading: Text(comment.postId),
           title: Text(comment.name),
           subtitle: Text(comment.body),
         ),
